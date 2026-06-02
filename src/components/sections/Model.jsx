@@ -3,7 +3,7 @@ import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 export function Model({ onLoad, ...props }) {
-  const { nodes, materials, scene } = useGLTF('/cyber_djinn.glb');
+  const { nodes, materials, scene } = useGLTF(import.meta.env.BASE_URL + '/cyber_djinn.glb')
 
   useEffect(() => {
     // 1. Head & Hands (Ultra Bright Neon Blue)
@@ -284,4 +284,4 @@ export function Model({ onLoad, ...props }) {
   );
 }
 
-useGLTF.preload('/cyber_djinn.glb');
+useGLTF.preload(import.meta.env.BASE_URL + '/cyber_djinn.glb');
