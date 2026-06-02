@@ -206,7 +206,7 @@ npm run preview
 
 ---
 
-# 📈 Performance Goals
+<!-- # 📈 Performance Goals
 
 ✔ Lighthouse Score 90+
 
@@ -220,7 +220,7 @@ npm run preview
 
 ✔ Fast Initial Load Time
 
-✔ Modern Browser Support
+✔ Modern Browser Support -->
 
 ---
 
