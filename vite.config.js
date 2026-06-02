@@ -5,5 +5,6 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     include: ['three', '@react-three/fiber', '@react-three/drei']
-  }
+  },
+  base: '/shieldX'
 })
