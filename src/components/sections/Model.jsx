@@ -1,58 +1,69 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
+
 export function Model({ onLoad, ...props }) {
-  const { nodes, materials, scene } = useGLTF(import.meta.env.BASE_URL + '/cyber_djinn.glb')
+  const { nodes, materials, scene } = useGLTF(import.meta.env.BASE_URL + '/cyber_djinn.glb');
+
+  const mobileMaterial = useMemo(() => new THREE.MeshBasicMaterial({
+    color: new THREE.Color(0, 3, 5),
+    wireframe: true,
+    transparent: true,
+    opacity: 0.8,
+  }), []);
 
   useEffect(() => {
-    // 1. Head & Hands (Ultra Bright Neon Blue)
-    const neonBlueWireframe = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(0, 2, 10), 
-      wireframe: true,
-      transparent: true,
-      opacity: 1, 
-    });
-
-    // 2. TV Machine, Monitors & Keyboards (Ultra Bright Cyan)
-    const neonCyanWireframe = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(0, 10, 10), 
-      wireframe: true,
-      transparent: true,
-      opacity: 1, 
-    });
-
-    // 3. Rest of the machine/cables (Brighter Neon Green)
-    const neonGreenWireframe = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(0, 5, 0), 
-      wireframe: true,
-      transparent: true,
-      opacity: 0.5, 
-    });
-
-    // Loop through and assign colors
-    scene.traverse((child) => {
-      if (child.isMesh) {
-        if (child.material === materials.human || child.material?.name === 'human') {
-          child.material = neonBlueWireframe;
-        } else if (
-          child.material === materials.monitor_and_details || 
-          child.material === materials.keyboard || 
-          child.material === materials.glass
-        ) {
-          child.material = neonCyanWireframe;
-        } else {
-          child.material = neonGreenWireframe;
+    if (isMobile) {
+      // Single shared material for ALL meshes on mobile — much lighter
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          child.material = mobileMaterial;
+          child.castShadow = false;    // disable shadows on mobile
+          child.receiveShadow = false;
         }
-      }
-    });
+      });
+    } else {
+      // Full quality desktop materials
+      // Head & Hands — Blue
+      const neonBlueWireframe = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0, 0.5, 8),   // boosted blue
+        wireframe: true, transparent: true, opacity: 1,
+      });
 
-    if (onLoad) {
-      onLoad();
+      // Monitors & Keyboards — Cyan
+      const neonCyanWireframe = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0, 8, 8),     // boosted cyan
+        wireframe: true, transparent: true, opacity: 1,
+      });
+
+      // Cables & rest — Green
+      const neonGreenWireframe = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0, 4, 0),     // boosted green
+        wireframe: true, transparent: true, opacity: 0.8,  // slightly more visible too
+      });
+
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          if (child.material === materials.human || child.material?.name === 'human') {
+            child.material = neonBlueWireframe;
+          } else if (
+            child.material === materials.monitor_and_details ||
+            child.material === materials.keyboard ||
+            child.material === materials.glass
+          ) {
+            child.material = neonCyanWireframe;
+          } else {
+            child.material = neonGreenWireframe;
+          }
+        }
+      });
     }
-  }, [scene, materials, onLoad]);
 
-  // Make sure all meshes are returned inside this single group
+    if (onLoad) onLoad();
+  }, [scene, materials, onLoad, mobileMaterial]);
+
   return (
     <group {...props} dispose={null}>
       <group position={[7.521, -1.809, -0.197]} rotation={[-3.124, 0.009, 2.943]}>
