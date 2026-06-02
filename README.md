@@ -10,6 +10,10 @@ Built with cutting-edge web technologies, ShieldX combines cinematic visuals, in
 
 ---
 
+🌐 **Live Site:** [https://akilakasun.github.io/ShieldX/](https://akilakasun.github.io/ShieldX/)
+
+---
+
 ![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge\&logo=react)
 ![Vite](https://img.shields.io/badge/Vite-Fast-purple?style=for-the-badge\&logo=vite)
 ![Three.js](https://img.shields.io/badge/Three.js-3D-black?style=for-the-badge\&logo=three.js)
