@@ -14,14 +14,14 @@ function Top() {
   return (
     <section className="relative w-full h-screen bg-[#050505] z-20 flex flex-col items-center justify-center overflow-hidden">
 
-      {/* Fullscreen loader — visible until model is ready */}
+  
       {!modelLoaded && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#050505]">
           
-          {/* Spinning ring */}
+        
           <div className="w-20 h-20 rounded-full border-2 border-transparent border-t-[#00F0FF] border-r-[#00F0FF]/30 animate-spin mb-6" />
           
-          {/* Text */}
+        
           <span className="text-[#00F0FF] font-mono text-sm tracking-[0.4em] uppercase animate-pulse">
             Initializing...
           </span>
@@ -61,7 +61,7 @@ function Top() {
 
       </Canvas>
 
-      {/* Scroll indicator — only shows after model loads */}
+
       {modelLoaded && (
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-60 pointer-events-none">
           <span className="text-[0.65rem] tracking-[0.3em] uppercase text-white/50 font-sans font-bold">Scroll to Enter</span>

@@ -13,7 +13,7 @@ export default function TrustBar() {
         Trusted by brands across
       </p>
       <div className="relative">
-        {/* Edge fade */}
+
         <div className="absolute left-0 top-0 bottom-0 w-40 z-10 pointer-events-none"
           style={{ background: 'linear-gradient(to right, #050505, transparent)' }} />
         <div className="absolute right-0 top-0 bottom-0 w-40 z-10 pointer-events-none"

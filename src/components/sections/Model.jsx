@@ -16,32 +16,30 @@ export function Model({ onLoad, ...props }) {
 
   useEffect(() => {
     if (isMobile) {
-      // Single shared material for ALL meshes on mobile — much lighter
+      
       scene.traverse((child) => {
         if (child.isMesh) {
           child.material = mobileMaterial;
-          child.castShadow = false;    // disable shadows on mobile
+          child.castShadow = false;    
           child.receiveShadow = false;
         }
       });
     } else {
-      // Full quality desktop materials
-      // Head & Hands — Blue
+    
       const neonBlueWireframe = new THREE.MeshBasicMaterial({
         color: new THREE.Color(0, 0.5, 8),   // boosted blue
         wireframe: true, transparent: true, opacity: 1,
       });
 
-      // Monitors & Keyboards — Cyan
       const neonCyanWireframe = new THREE.MeshBasicMaterial({
         color: new THREE.Color(0, 8, 8),     // boosted cyan
         wireframe: true, transparent: true, opacity: 1,
       });
 
-      // Cables & rest — Green
+      
       const neonGreenWireframe = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(0, 4, 0),     // boosted green
-        wireframe: true, transparent: true, opacity: 0.8,  // slightly more visible too
+        color: new THREE.Color(0, 4, 0),    
+        wireframe: true, transparent: true, opacity: 0.8, 
       });
 
       scene.traverse((child) => {

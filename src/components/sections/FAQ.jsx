@@ -15,7 +15,7 @@ export default function FAQ() {
   const [open, setOpen] = useState(null);
   const canvasRef = useRef(null);
 
-  // --- HIGH-PERFORMANCE NEURAL NETWORK ---
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -98,13 +98,13 @@ export default function FAQ() {
   return (
     <section id="faq" className="relative py-36 px-6 md:px-16 bg-[#060912] overflow-hidden">
       
-      {/* Neon Neural Network Background */}
+  
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 z-0 pointer-events-none opacity-40 drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]" 
       />
 
-      {/* Background Ambient Glow */}
+
       <div 
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] pointer-events-none opacity-20 mix-blend-screen z-0"
         style={{ background: 'radial-gradient(ellipse, rgba(0,240,255,0.15) 0%, transparent 70%)' }} 
@@ -112,7 +112,7 @@ export default function FAQ() {
 
       <div className="max-w-3xl mx-auto relative z-10">
         
-        {/* Header Setup */}
+
         <div className="text-center mb-20">
           <p className="text-[#00F0FF] font-mono text-sm uppercase tracking-widest mb-4 flex items-center justify-center gap-2 reveal">
             <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_10px_rgba(0,240,255,0.8)]"></span>
@@ -123,16 +123,15 @@ export default function FAQ() {
           </h2>
         </div>
 
-        {/* FAQ Accordion List */}
+    
         <div className="space-y-3">
           {faqs.map((f, i) => {
             const isOpen = open === i;
 
             return (
-              /* THE FIX: This outer div has a static 'reveal' class. React won't touch it. */
               <div key={i} className="reveal" style={{ transitionDelay: `${i * 60}ms` }}>
                 
-                {/* The inner div handles all the dynamic glowing classes based on state */}
+              
                 <div 
                   className={`border border-white/5 bg-[#0A0D18]/60 backdrop-blur-md rounded-2xl transition-all duration-300 ${
                     isOpen ? 'border-[#00F0FF]/30 shadow-[0_0_20px_rgba(0,240,255,0.1)]' : 'hover:bg-[#0A0D18]/90 hover:border-white/10'
@@ -149,7 +148,7 @@ export default function FAQ() {
                       {f.q}
                     </span>
                     
-                    {/* Plus/Cross Icon */}
+                 
                     <span className={`flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center text-lg transition-all duration-500 ease-out ${
                       isOpen 
                         ? 'border-[#00F0FF] text-[#00F0FF] rotate-45 shadow-[0_0_15px_rgba(0,240,255,0.5)]' 
@@ -159,7 +158,7 @@ export default function FAQ() {
                     </span>
                   </button>
                   
-                  {/* Answer Content - Switched from max-h-48 to max-h-[500px] */}
+                 
                   <div 
                     className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'

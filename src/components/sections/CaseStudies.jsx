@@ -50,7 +50,7 @@ export default function CaseStudies() {
   useEffect(() => {
     if (!isLoaded) return;
 
-    // --- HIGH-PERFORMANCE NEURAL NETWORK ---
+  
     const canvas = canvasRef.current;
     if (!canvas) return;
     
@@ -66,7 +66,7 @@ export default function CaseStudies() {
 
     const initParticles = () => {
       particles = [];
-      // PERFORMANCE FIX 1: Cap the maximum number of particles to 70 to prevent exponential math lag on 4K screens
+      // Cap the maximum number of particles to 70 to prevent exponential math lag on 4K screens
       const particleCount = Math.min(Math.floor((width * height) / 12000), 70); 
       
       for (let i = 0; i < particleCount; i++) {
@@ -83,11 +83,11 @@ export default function CaseStudies() {
     const renderNetwork = () => {
       ctx.clearRect(0, 0, width, height);
       
-      // PERFORMANCE FIX 2: REMOVED ctx.shadowBlur (This causes massive CPU lag).
+      // REMOVED ctx.shadowBlur (This causes massive CPU lag).
       // We now handle the glow using GPU-accelerated CSS drop-shadows on the canvas element itself.
 
       const maxDist = 160;
-      const maxDistSq = maxDist * maxDist; // Pre-calculated for fast comparison
+      const maxDistSq = maxDist * maxDist; 
 
       particles.forEach((p, index) => {
         p.x += p.vx;
@@ -106,7 +106,7 @@ export default function CaseStudies() {
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
           
-          // PERFORMANCE FIX 3: Avoid Math.sqrt unless absolutely necessary
+          // Avoid Math.sqrt unless absolutely necessary
           const distSq = dx * dx + dy * dy;
 
           if (distSq < maxDistSq) {
@@ -128,7 +128,7 @@ export default function CaseStudies() {
     resize();
     gsap.ticker.add(renderNetwork);
 
-    // --- SETUP GSAP UI ANIMATIONS ---
+   
     const ctxGsap = gsap.context(() => {
       gsap.fromTo([headerRef.current, imageRef.current],
         { y: 30, opacity: 0 },
@@ -189,12 +189,10 @@ export default function CaseStudies() {
   }, [isLoaded]);
 
   return (
-    // Added will-change-transform to hint the GPU for smooth scrolling
+  
     <section id="case-studies" ref={sectionRef} className="py-24 md:py-36 overflow-hidden bg-[#060912] font-sans relative min-h-screen will-change-transform">
       
-      {/* PERFORMANCE FIX 4: Added drop-shadow CSS filter. 
-        This applies the neon glow using your graphics card instead of your CPU! 
-      */}
+  
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 z-0 pointer-events-none opacity-60 drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]" 

@@ -50,12 +50,12 @@ const services = [
 
 const ServiceCard = React.forwardRef(({ icon: Icon, title, desc, tags }, ref) => {
   return (
-    // Outer wrapper given to GSAP for entrance animations
+  
     <div ref={ref} className="opacity-0">
-      {/* Inner wrapper handles the glassmorphism, glow border, and hover zoom */}
+ 
       <div className="h-full rounded-3xl p-8 group transition-all duration-500 relative overflow-hidden border-[#00F0FF]/60 hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] backdrop-blur-2xl border border-white/[0.08] hover:bg-white/[0.04] hover:border-[#00F0FF]/60 hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:scale-[1.03]">
 
-        {/* Subtle corner highlight */}
+      
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{ background: 'radial-gradient(circle at top right, rgba(0,240,255,0.1), transparent 70%)' }}
@@ -95,7 +95,7 @@ export default function Services() {
   cardsRef.current = [];
 
   useEffect(() => {
-    // --- NEURAL NETWORK VENDETTA MASK ---
+  
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let width, height;
@@ -183,7 +183,7 @@ export default function Services() {
     resize();
     gsap.ticker.add(renderNetwork);
 
-    // --- GSAP CARD ANIMATIONS ---
+
     const timer = setTimeout(() => {
       const ctxGsap = gsap.context(() => {
         const validCards = cardsRef.current.filter(Boolean);

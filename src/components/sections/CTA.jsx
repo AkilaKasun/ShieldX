@@ -13,21 +13,21 @@ function ParticleCanvas() {
     canvas.width = W; 
     canvas.height = H;
 
-    // Upgraded particles with neon theme
+
     const particles = Array.from({ length: 80 }, () => ({
       x: Math.random() * W, 
       y: Math.random() * H,
       vx: (Math.random() - 0.5) * 0.4, 
       vy: (Math.random() - 0.5) * 0.4,
       r: Math.random() * 2 + 0.5,
-      o: Math.random() * 0.5 + 0.2, // Slightly higher base opacity
+      o: Math.random() * 0.5 + 0.2, 
     }));
 
     let raf;
     function draw() {
       ctx.clearRect(0, 0, W, H);
       
-      // Native Canvas Neon Glow
+
       ctx.shadowBlur = 10;
       ctx.shadowColor = '#00F0FF';
 
@@ -35,7 +35,7 @@ function ParticleCanvas() {
         p.x += p.vx; 
         p.y += p.vy;
         
-        // Wrap around edges seamlessly
+        // Wrap around edges 
         if (p.x < 0) p.x = W;
         if (p.x > W) p.x = 0;
         if (p.y < 0) p.y = H;
@@ -69,10 +69,10 @@ function ParticleCanvas() {
 
 export default function CTA() {
   return (
-    // Changed background to the deep dark #060912 to match other sections
+   
     <section id="contact" className="py-48 px-6 md:px-16 relative overflow-hidden bg-[#060912] font-sans">
       
-      {/* Glow rings - Updated to Neon Cyan */}
+     
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         {[700, 900, 1100].map((s, i) => (
           <div 
@@ -85,19 +85,19 @@ export default function CTA() {
 
       <ParticleCanvas />
 
-      {/* Center ambient glow - Updated to Neon Cyan */}
+
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none mix-blend-screen"
         style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.15), transparent 70%)' }} />
 
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         
-        {/* Professional Eyebrow: Mono font, wide tracking */}
+   
         <p className="font-mono text-sm uppercase tracking-[0.3em] text-[#00F0FF] mb-6 flex items-center justify-center gap-2 reveal drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">
           <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse"></span>
           Ready to Begin
         </p>
         
-        {/* Main Headline */}
+      
         <h2
           className="font-sans font-black text-white leading-[1.0] tracking-tighter reveal mb-8 drop-shadow-lg"
           style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)' }}
@@ -113,7 +113,7 @@ export default function CTA() {
           Whether you're protecting your reputation or scaling your business, we provide the expertise, technology, and strategy to make it happen — fast.
         </p>
         
-        {/* Upgraded Cyberpunk Buttons */}
+        
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center reveal">
           
           <button className="w-full sm:w-auto px-10 py-4 bg-[#00F0FF] text-[#050505] font-bold tracking-wide rounded-full hover:bg-white hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all duration-300 transform hover:-translate-y-1">

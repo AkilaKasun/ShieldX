@@ -15,7 +15,7 @@ export default function WhyChooseUs() {
   const featuresRefs = useRef([]);
   const canvasRef = useRef(null);
 
-  // Clear arrays on every render to prevent dead nodes piling up during hot-reloads
+
   statsRefs.current = [];
   featuresRefs.current = [];
 
@@ -50,7 +50,7 @@ export default function WhyChooseUs() {
   ];
 
   useEffect(() => {
-    // --- NEURAL NETWORK BACKGROUND (GSAP Ticker + Canvas) ---
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let width, height;
@@ -64,13 +64,13 @@ export default function WhyChooseUs() {
 
     const initParticles = () => {
       particles = [];
-      const particleCount = Math.floor((width * height) / 15000); // Responsive amount of nodes
+      const particleCount = Math.floor((width * height) / 15000); 
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.5, // Slow velocity X
-          vy: (Math.random() - 0.5) * 0.5, // Slow velocity Y
+          vx: (Math.random() - 0.5) * 0.5, 
+          vy: (Math.random() - 0.5) * 0.5, 
           radius: Math.random() * 1.5 + 0.5,
         });
       }
@@ -79,12 +79,12 @@ export default function WhyChooseUs() {
     const renderNetwork = () => {
       ctx.clearRect(0, 0, width, height);
       
-      // Update and draw particles
+    
       particles.forEach((p, index) => {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Bounce off edges
+      
         if (p.x < 0 || p.x > width) p.vx *= -1;
         if (p.y < 0 || p.y > height) p.vy *= -1;
 
@@ -93,7 +93,7 @@ export default function WhyChooseUs() {
         ctx.fillStyle = 'rgba(0, 175, 255, 0.5)';
         ctx.fill();
 
-        // Connect nearby particles
+   
         for (let j = index + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
@@ -104,7 +104,7 @@ export default function WhyChooseUs() {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            // Opacity fades out as distance increases
+           
             const opacity = 1 - distance / 120;
             ctx.strokeStyle = `rgba(0, 240, 255, ${opacity * 0.2})`;
             ctx.lineWidth = 0.5;
@@ -117,14 +117,14 @@ export default function WhyChooseUs() {
     window.addEventListener('resize', resize);
     resize();
     
-    // Bind the canvas render loop to GSAP's internal ticker
+   
     gsap.ticker.add(renderNetwork);
 
-    // --- GSAP SCROLL ANIMATIONS ---
+  
     const timer = setTimeout(() => {
       const ctxGsap = gsap.context(() => {
         
-        // 1. Counters
+       
         statsRefs.current.forEach((el) => {
           if (!el) return;
           const targetValue = parseFloat(el.getAttribute('data-value'));
@@ -146,7 +146,7 @@ export default function WhyChooseUs() {
           });
         });
 
-        // 2. Right Side Animation
+       
         const validFeatures = featuresRefs.current.filter(Boolean);
         if (validFeatures.length > 0) {
           gsap.fromTo(validFeatures,
@@ -173,14 +173,14 @@ export default function WhyChooseUs() {
     return () => {
       clearTimeout(timer);
       window.removeEventListener('resize', resize);
-      gsap.ticker.remove(renderNetwork); // Clean up the ticker
+      gsap.ticker.remove(renderNetwork); 
     };
   }, []);
 
   return (
     <section ref={sectionRef} className="py-36 px-6 md:px-16 bg-[#060912] relative overflow-hidden">
       
-      {/* Canvas for Neural Network Background */}
+   
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 z-0 pointer-events-none"

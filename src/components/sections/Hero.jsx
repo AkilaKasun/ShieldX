@@ -54,7 +54,7 @@ export default function Hero({ scrollY }) {
             ease: "power3.out",
             scrollTrigger: {
               trigger: headlineRef.current,
-              start: "top 80%", // Triggers when the top of this block hits 80% down the screen
+              start: "top 80%", 
               toggleActions: "play none none reverse"
             }
           }
@@ -68,10 +68,9 @@ export default function Hero({ scrollY }) {
   return (
     <section ref={sectionRef} className="relative min-h-[300vh] font-sans" id="hero">
 
-      {/* Sticky globe container — pinned for scroll effect, aligned to CENTER */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center">
 
-        {/* Radial bg glow */}
+  
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
             w-[800px] h-[800px] rounded-full
@@ -87,12 +86,12 @@ export default function Hero({ scrollY }) {
           </Suspense>
         </div>
 
-        {/* Top Centered Title Content (Initial View) */}
+
         <div
           ref={titleRef}
           className="relative z-10 text-center pointer-events-none select-none w-full"
         >
-          {/* Eyebrow Text */}
+     
           <div className="overflow-hidden mb-6">
             <p className="word-wrap">
               <span
@@ -104,7 +103,7 @@ export default function Hero({ scrollY }) {
             </p>
           </div>
 
-          {/* Subtitle */}
+    
           <div className="overflow-hidden">
             <p
               className="word-inner font-sans font-light text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#00AFFF] opacity-80 text-sm tracking-[0.25em] uppercase mx-auto"
@@ -115,17 +114,17 @@ export default function Hero({ scrollY }) {
           </div>
         </div>
 
-        {/* Scroll indicator - Centered at the bottom */}
+  
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-60">
           <span className="text-[0.65rem] tracking-[0.3em] uppercase text-[#00F0FF] font-sans font-bold">Scroll</span>
           <div className="w-[2px] h-12 bg-gradient-to-b from-[#00F0FF] to-transparent animate-pulse" />
         </div>
       </div>
 
-      {/* Content that appears as globe scrolls away (The Lower Section) */}
+  
       <div className="relative z-10 bg-[#050505]">
 
-        {/* Tagline reveal - Centered alignment */}
+       
         <div ref={headlineRef} className="min-h-screen flex flex-col items-center justify-center py-32 px-6">
           <div className="max-w-5xl text-center mx-auto">
 
@@ -133,7 +132,7 @@ export default function Hero({ scrollY }) {
               Our Mission
             </p>
 
-            {/* The Main Headline that was previously missing/hidden */}
+        
             <h1
               className="font-sans font-black leading-[1.05] tracking-[-0.04em] mb-8 text-white reveal"
               style={{ fontSize: 'clamp(3.5rem, 9vw, 9rem)' }}
@@ -179,7 +178,7 @@ export default function Hero({ scrollY }) {
               </button>
             </div>
 
-            {/* Floating stats - Grid centered */}
+        
             <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
               {[
                 { num: 98, suffix: '%', label: 'Removal Success' },

@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
-// ── Icosphere-like geometry for cyber-polygon look ──
+
 function CyberSphere({ scrollY }) {
   const groupRef = useRef()
   const outerRef = useRef()
@@ -22,7 +22,7 @@ function CyberSphere({ scrollY }) {
     opacity: 0.12,
   }), [])
 
-  // Detailed sphere beneath
+
   const sphereGeo = useMemo(() => new THREE.SphereGeometry(1.55, 64, 48), [])
   const sphereMat = useMemo(() => new THREE.MeshBasicMaterial({
     color: 0x001a2e,
@@ -72,7 +72,7 @@ function CyberSphere({ scrollY }) {
     { r: 2.6, thickness: 0.003, tilt: Math.PI * 0.52, speed: 0.04 },
   ], [])
 
-  // Ambient particles
+
   const ambientGeo = useMemo(() => {
     const geo = new THREE.BufferGeometry()
     const n = 600
@@ -129,64 +129,62 @@ function CyberSphere({ scrollY }) {
     const t = clock.getElapsedTime()
     const scroll = scrollY.current
 
-    // Globe rotation — continuous slow spin + scroll tilt
+
     groupRef.current.rotation.y = t * 0.12 + scroll * Math.PI * 0.5
     groupRef.current.rotation.x = scroll * 0.3
 
-    // Scale down and move down as user scrolls
+   
     const scale = Math.max(0.3, 1 - scroll * 0.55)
     groupRef.current.scale.setScalar(scale)
 
-    // Move up/back as scrolled
+   
     groupRef.current.position.y = scroll * -3.5
     groupRef.current.position.z = scroll * -2
 
-    // Inner icosahedron counter-rotation
+  
     if (outerRef.current) outerRef.current.rotation.y = -t * 0.08
     if (innerRef.current) innerRef.current.rotation.x = t * 0.15
 
-    // Ring rotations
     ringsRef.current.forEach((ring, i) => {
       if (ring) ring.rotation.z = t * rings[i].speed
     })
 
-    // Glow pulse
+   
     if (glowRef.current) {
       glowRef.current.material.opacity = 0.04 + Math.sin(t * 0.8) * 0.02
     }
 
-    // Ambient particles slow rotation
+    
     if (particlesRef.current) {
       particlesRef.current.rotation.y = t * 0.015
     }
 
-    // Arc line opacity flicker
+ 
   })
 
   return (
     <group ref={groupRef}>
-      {/* Ambient particles (don't scale with globe) */}
+  
       <points ref={particlesRef} geometry={ambientGeo} material={ambientMat} />
 
-      {/* Core sphere */}
+
       <mesh geometry={sphereGeo} material={sphereMat} />
 
-      {/* Fibonacci dots */}
+    
       <points geometry={dotsGeo} material={dotsMat} />
 
-      {/* Icosahedron wireframe overlay */}
       <mesh ref={outerRef} geometry={icoGeo} material={icoMat} />
 
-      {/* Inner denser wireframe */}
+
       <mesh ref={innerRef}>
         <icosahedronGeometry args={[1.3, 2]} />
         <meshBasicMaterial color={0x00AFFF} wireframe transparent opacity={0.06} />
       </mesh>
 
-      {/* Glow */}
+      
       <mesh ref={glowRef} geometry={glowGeo} material={glowMat} />
 
-      {/* Orbit rings */}
+     
       {rings.map((ring, i) => (
         <mesh
           key={i}
@@ -198,12 +196,12 @@ function CyberSphere({ scrollY }) {
         </mesh>
       ))}
 
-      {/* Energy arc lines */}
+     
       {arcLines.map((arc, i) => (
         <line key={i} geometry={arc.geo} material={arc.mat} />
       ))}
 
-      {/* Equatorial scan line */}
+
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.62, 0.003, 4, 128]} />
         <meshBasicMaterial color={0x00ffcc} transparent opacity={0.35} />
@@ -212,7 +210,7 @@ function CyberSphere({ scrollY }) {
   )
 }
 
-// Scroll-aware wrapper (reads window scroll, not drei scroll)
+
 function ScrollReader({ scrollY }) {
   useEffect(() => {
     const onScroll = () => {
