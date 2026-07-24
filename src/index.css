@@ -296,3 +296,11 @@
     transform: none !important;
   }
 }
+
+@media (max-width: 767px), (pointer: coarse) {
+  /* Keep the protected Cyber Djinn canvas visible while allowing page swipes. */
+  section.h-screen.z-20 canvas {
+    pointer-events: none !important;
+    touch-action: pan-y !important;
+  }
+}
