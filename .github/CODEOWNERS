@@ -1,0 +1,6 @@
+# Existing 3D render system: explicit owner review is required.
+/src/components/sections/Top.jsx @sankalpabandara
+/src/components/sections/Model.jsx @sankalpabandara
+/src/components/sections/CyberEarth.jsx @sankalpabandara
+/public/cyber_djinn.glb @sankalpabandara
+

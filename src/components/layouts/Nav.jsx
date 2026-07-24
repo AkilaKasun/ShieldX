@@ -1,171 +1,136 @@
-"use client";
+import { useEffect, useState } from 'react'
+import { Menu, X } from 'lucide-react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { serviceHubs } from '../../content/siteContent'
+import { trackEvent } from '../../lib/analytics'
+import BrandLogo from '../ui/BrandLogo'
 
-import { useState, useEffect } from 'react';
-
-// Custom SVG Logo Component (from our earlier iterations)
-function ShieldXLogo({ className = "w-40" }) {
-  return (
-    <div className={`group relative flex items-center gap-3 cursor-pointer ${className}`}>
-      
-      {/* Ambient Glow behind the logo on hover */}
-      <div className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#00F0FF] opacity-0 blur-xl group-hover:opacity-40 transition-opacity duration-700 pointer-events-none" />
-
-      {/* The Shield Icon */}
-      <svg 
-        viewBox="0 0 200 200" 
-        className="w-10 h-10 shrink-0 transform group-hover:scale-105 transition-transform duration-500" 
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="navShieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00F0FF" />
-            <stop offset="100%" stopColor="#00AFFF" />
-          </linearGradient>
-        </defs>
-
-        {/* Outer Cyber-Shield Geometry */}
-        <path 
-          d="M100 15 L175 45 L165 145 L100 185 L35 145 L25 45 Z" 
-          fill="none" 
-          stroke="url(#navShieldGradient)" 
-          strokeWidth="12" 
-          strokeLinejoin="round"
-          className="drop-shadow-[0_0_8px_rgba(0,240,255,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(0,240,255,0.7)] transition-all duration-500"
-        />
-        
-        {/* Inner 'X' Architecture */}
-        <path 
-          d="M70 75 L130 135 M130 75 L70 135" 
-          stroke="url(#navShieldGradient)" 
-          strokeWidth="14" 
-          strokeLinecap="round" 
-          className="opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-        />
-
-        {/* Center Power Node */}
-        <circle 
-          cx="100" 
-          cy="105" 
-          r="8" 
-          fill="#ffffff" 
-          className="origin-center scale-100 group-hover:scale-[1.7] transition-transform duration-300 shadow-[0_0_10px_#fff]"
-        />
-      </svg>
-
-      {/* The Typography */}
-      <div className="flex flex-col">
-        <span className="font-sans font-black text-xl md:text-2xl tracking-tighter text-white leading-none">
-          SHIELD<span className="text-transparent bg-clip-text bg-gradient-to-br from-[#00F0FF] to-[#00AFFF] drop-shadow-[0_0_8px_rgba(0,240,255,0.4)] group-hover:drop-shadow-[0_0_12px_rgba(0,240,255,0.8)] transition-all duration-300">X</span>
-        </span>
-        <span className="font-mono text-[8px] md:text-[9px] text-[#00F0FF]/60 uppercase tracking-[0.3em] mt-1 group-hover:text-[#00F0FF]/90 transition-colors duration-300">
-          Cyber Defense
-        </span>
-      </div>
-
-    </div>
-  );
-}
+const secondaryLinks = [
+  { label: 'Packages', to: '/packages' },
+  { label: 'Proof', to: '/case-studies' },
+  { label: 'About', to: '/about' },
+]
 
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false)
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    const onScroll = () => setScrolled(window.scrollY > 48)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
-  const links = ['Services', 'Case Studies', 'Process', 'FAQ', 'Contact'];
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [open])
+
+  const navClass = ({ isActive }) =>
+    `text-xs xl:text-sm font-medium tracking-wide transition-colors ${
+      isActive ? 'text-[#00F0FF]' : 'text-white/58 hover:text-white'
+    }`
 
   return (
     <>
-      <nav className={`
-        fixed top-0 left-0 right-0 z-50 flex items-center justify-between
-        transition-all duration-500 cursor-none font-sans
-        ${scrolled
-          ? 'px-6 md:px-10 py-4 bg-[#060912]/90 backdrop-blur-2xl border-b border-[#00F0FF]/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
-          : 'px-6 md:px-10 py-7 bg-transparent'}
-      `}>
-        
-        {/* Replaced text with our Custom SVG Logo */}
-        <ShieldXLogo />
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? 'bg-[#050711]/92 backdrop-blur-2xl border-b border-[#00F0FF]/10 shadow-[0_12px_40px_rgba(0,0,0,.3)]'
+            : 'bg-gradient-to-b from-black/70 to-transparent'
+        }`}
+        aria-label="Primary navigation"
+      >
+        <div className={`max-w-[1500px] mx-auto px-5 md:px-8 flex items-center justify-between ${scrolled ? 'py-3' : 'py-5'}`}>
+          <Link to="/" aria-label="FLUX Digital home">
+            <BrandLogo />
+          </Link>
 
-        {/* Desktop links */}
-        <ul className="hidden md:flex gap-10 list-none items-center">
-          {links.map(l => (
-            <li key={l}>
-              <a
-                href={`#${l.toLowerCase().replace(' ', '-')}`}
-                className="text-white/60 hover:text-[#00F0FF] text-sm font-medium tracking-wide transition-all duration-300 cursor-none relative group"
-              >
-                {l}
-                {/* Modern Link Underline Effect */}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00F0FF] transition-all duration-300 group-hover:w-full group-hover:shadow-[0_0_8px_#00F0FF]" />
-              </a>
-            </li>
-          ))}
-        </ul>
+          <div className="hidden lg:flex items-center gap-5 xl:gap-7">
+            {serviceHubs.map((hub) => (
+              <NavLink key={hub.slug} to={`/${hub.slug}`} className={navClass}>
+                {hub.navLabel}
+              </NavLink>
+            ))}
+            {secondaryLinks.map((link) => (
+              <NavLink key={link.to} to={link.to} className={navClass}>
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
 
-        {/* CTA Button */}
-        <button className="hidden md:block px-6 py-2.5 bg-[#00F0FF]/10 text-[#00F0FF] font-semibold text-sm tracking-wide rounded-full border border-[#00F0FF]/30 hover:bg-[#00F0FF] hover:text-[#050505] hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all duration-300 cursor-none transform hover:-translate-y-0.5">
-          Free Consultation
-        </button>
+          <div className="hidden lg:flex items-center gap-3">
+            <Link to="/contact" className="px-4 py-2.5 text-sm text-white/65 hover:text-white">
+              Contact
+            </Link>
+            <Link
+              to="/emergency-reputation-rescue/book-case-assessment"
+              className="px-5 py-2.5 bg-[#00F0FF] text-[#031015] font-bold text-sm rounded-full hover:bg-white transition-colors"
+              onClick={() => trackEvent('emergency_cta_click', { placement: 'navigation' })}
+            >
+              Start assessment
+            </Link>
+          </div>
 
-        {/* Hamburger Menu Icon (Mobile) */}
-        <button
-          className="md:hidden flex flex-col gap-[6px] cursor-none z-50 group p-2"
-          onClick={() => setOpen(!open)}
-        >
-          <span className={`block w-7 h-[2px] bg-[#00F0FF] transition-all duration-300 shadow-[0_0_5px_rgba(0,240,255,0.5)] ${open ? 'rotate-45 translate-y-[8px]' : ''}`} />
-          <span className={`block w-7 h-[2px] bg-[#00F0FF] transition-all duration-300 shadow-[0_0_5px_rgba(0,240,255,0.5)] ${open ? 'opacity-0 translate-x-4' : ''}`} />
-          <span className={`block w-7 h-[2px] bg-[#00F0FF] transition-all duration-300 shadow-[0_0_5px_rgba(0,240,255,0.5)] ${open ? '-rotate-45 -translate-y-[8px]' : ''}`} />
-        </button>
+          <button
+            type="button"
+            className="lg:hidden w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-[#00F0FF]"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
       </nav>
 
-      {/* Mobile menu overlay */}
-      <div className={`
-        fixed inset-0 z-40 bg-[#060912]/95 backdrop-blur-3xl
-        flex flex-col items-center justify-center gap-10
-        transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
-        ${open ? 'opacity-100 pointer-events-auto scale-100' : 'opacity-0 pointer-events-none scale-95'}
-      `}>
-        
-        {/* Large Background Watermark in Mobile Menu */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] pointer-events-none">
-           <svg viewBox="0 0 200 200" className="w-[120vw] h-[120vw]" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100 15 L175 45 L165 145 L100 185 L35 145 L25 45 Z" fill="none" stroke="#00F0FF" strokeWidth="2" />
-           </svg>
+      <div
+        className={`fixed inset-0 z-40 bg-[#050711]/98 backdrop-blur-3xl transition-all duration-300 lg:hidden ${
+          open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="h-full overflow-y-auto px-6 pt-28 pb-10">
+          <div className="max-w-md mx-auto">
+            <p className="font-sans text-[10px] tracking-[.25em] uppercase text-[#00F0FF]/60 mb-5">Service hubs</p>
+            <div className="space-y-2">
+              {serviceHubs.map((hub) => (
+                <NavLink
+                  key={hub.slug}
+                  to={`/${hub.slug}`}
+                  className="block text-3xl sm:text-4xl font-sans font-bold py-2 text-white/80 hover:text-[#00F0FF]"
+                >
+                  {hub.navLabel}
+                </NavLink>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-8 pt-8 border-t border-white/10">
+              {[...secondaryLinks, { label: 'FAQ', to: '/faq' }, { label: 'Contact', to: '/contact' }].map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  className="rounded-xl border border-white/10 px-4 py-3 text-white/60 hover:text-[#00F0FF]"
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+            </div>
+            <Link
+              to="/emergency-reputation-rescue/book-case-assessment"
+              className="btn-primary mt-8 flex justify-center"
+              onClick={() => trackEvent('emergency_cta_click', { placement: 'mobile_navigation' })}
+            >
+              Start case assessment
+            </Link>
+          </div>
         </div>
-
-        {links.map((l, i) => (
-          <a
-            key={l}
-            href={`#${l.toLowerCase().replace(' ', '-')}`}
-            className="font-sans text-4xl md:text-5xl font-black tracking-tight text-white/80 hover:text-[#00F0FF] transition-all duration-300 cursor-none relative z-10 hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]"
-            style={{ 
-              transitionDelay: open ? `${i * 100}ms` : '0ms',
-              opacity: open ? 1 : 0,
-              transform: open ? 'translateY(0)' : 'translateY(20px)'
-            }}
-            onClick={() => setOpen(false)}
-          >
-            {l}
-          </a>
-        ))}
-
-        {/* Mobile CTA */}
-        <button 
-          className="mt-8 px-8 py-4 bg-[#00F0FF] text-[#050505] font-bold text-lg tracking-wide rounded-full shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-transform active:scale-95 cursor-none relative z-10"
-          style={{ 
-            transitionDelay: open ? `${links.length * 100}ms` : '0ms',
-            opacity: open ? 1 : 0,
-            transform: open ? 'translateY(0)' : 'translateY(20px)'
-          }}
-          onClick={() => setOpen(false)}
-        >
-          Book Consultation
-        </button>
       </div>
     </>
   )

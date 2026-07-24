@@ -1,58 +1,49 @@
-const testimonials = [
+import { BarChart3, CalendarRange, Database, UserCheck } from 'lucide-react'
+
+const standards = [
   {
-    quote: "ShieldX removed content that had been destroying my reputation for two years — within 3 weeks. I had given up hope. These guys are miracle workers.",
-    name: 'Ashan Perera',
-    role: 'Entrepreneur, Colombo',
-    init: 'AP',
+    icon: Database,
+    title: 'Source named',
+    copy: 'Every published metric identifies the system, record, or approved evidence behind it.',
   },
   {
-    quote: "Our organic traffic tripled in 6 months. The SEO team is exceptional — they actually explain what they're doing and why. Zero black-box nonsense.",
-    name: 'Nadeesha Silva',
-    role: 'CEO, Fashion Brand',
-    init: 'NS',
+    icon: CalendarRange,
+    title: 'Date range shown',
+    copy: 'Results state the measurement window so a number cannot float free of context.',
   },
   {
-    quote: "Professional, discreet, and devastatingly effective. Our crisis was resolved in under two weeks. I recommend ShieldX to every business owner I know.",
-    name: 'Ruwan Jayawardena',
-    role: 'Public Figure, Kandy',
-    init: 'RJ',
+    icon: BarChart3,
+    title: 'Contribution qualified',
+    copy: 'FLUX Digital work is separated from media spend, platform decisions, market effects, and client inputs.',
+  },
+  {
+    icon: UserCheck,
+    title: 'Consent recorded',
+    copy: 'Names, quotes, and identifiable case details appear only with documented permission.',
   },
 ]
 
 export default function Testimonials() {
   return (
-    <section className="py-36 px-6 md:px-16 bg-[#020308]">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-20">
-          <p className="section-eyebrow reveal">Client Stories</p>
-          <h2 className="font-sans section-title text-white reveal">What Clients Say</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
-            <div
-              key={i}
-              className="glass-card rounded-2xl p-8 flex flex-col hover:border-white/15 transition-all duration-300 reveal group"
-              style={{ transitionDelay: `${i * 100}ms` }}
-              data-hover
-            >
-              <div className="flex gap-1 mb-6 text-[#00AFFF]">
-                {'★★★★★'.split('').map((s, j) => <span key={j}>{s}</span>)}
-              </div>
-              <blockquote className="text-white/60 text-sm leading-relaxed font-light italic flex-1 mb-8">
-                "{t.quote}"
-              </blockquote>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00AFFF] to-[#2D7FF9] flex items-center justify-center font-display font-bold text-black text-xs flex-shrink-0">
-                  {t.init}
-                </div>
-                <div>
-                  <div className="text-white text-sm font-medium">{t.name}</div>
-                  <div className="text-white/30 text-xs">{t.role}</div>
-                </div>
-              </div>
-            </div>
-          ))}
+    <section className="py-28 md:py-36 px-6 md:px-12 bg-[#020308]">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-[.7fr_1.3fr] gap-14">
+          <div>
+            <p className="section-eyebrow reveal">Review policy</p>
+            <h2 className="section-title text-white reveal">No invented praise.</h2>
+            <p className="mt-6 text-white/45 leading-relaxed reveal">
+              The previous named testimonials could not be verified from the repository. They are replaced with the publication standard FLUX Digital will apply to approved client evidence.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {standards.map(({ icon: Icon, title, copy }, index) => (
+              <article key={title} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 reveal" style={{ transitionDelay: `${index * 70}ms` }}>
+                <Icon size={22} className="text-[#00F0FF]" strokeWidth={1.4} />
+                <h3 className="font-sans font-bold text-xl leading-tight tracking-[-0.03em] mt-7">{title}</h3>
+                <p className="text-white/42 text-sm leading-relaxed mt-3">{copy}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -1,282 +1,63 @@
-"use client";
-
-import React, { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-const cases = [
-  { tag: 'Reputation Recovery', metric: '92%', title: 'Negative results removed from first page', progress: 92 },
-  { tag: 'SEO Growth', metric: '430%', title: 'Organic traffic increase in 8 months', progress: 85 },
-  { tag: 'Social Growth', metric: '150K+', title: 'Followers gained across platforms', progress: 75 },
-  { tag: 'Content Removal', metric: '287', title: 'Harmful URLs removed in under 30 days', progress: 98 },
-  { tag: 'Paid Advertising', metric: '340%', title: 'Return on ad spend for retail client', progress: 68 },
-];
+import { ArrowRight, CheckCircle2, Database, FileCheck2, TimerReset } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { caseStudies } from '../../content/siteContent'
+import ParticleNetwork from '../ui/ParticleNetwork'
 
 export default function CaseStudies() {
-  const sectionRef = useRef(null);
-  const headerRef = useRef(null);
-  const imageRef = useRef(null);
-  const canvasRef = useRef(null);
-  const itemsRef = useRef([]);
-  
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  itemsRef.current = [];
-
-  // 1. LAZY LOADING OBSERVER
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsLoaded(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '200px' }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  // 2. CANVAS & GSAP ANIMATIONS
-  useEffect(() => {
-    if (!isLoaded) return;
-
-  
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
-
-    const resize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = canvas.parentElement.offsetHeight;
-      initParticles();
-    };
-
-    const initParticles = () => {
-      particles = [];
-      // Cap the maximum number of particles to 70 to prevent exponential math lag on 4K screens
-      const particleCount = Math.min(Math.floor((width * height) / 12000), 70); 
-      
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.8,
-          vy: (Math.random() - 0.5) * 0.8,
-          radius: Math.random() * 2 + 1,
-        });
-      }
-    };
-
-    const renderNetwork = () => {
-      ctx.clearRect(0, 0, width, height);
-      
-      // REMOVED ctx.shadowBlur (This causes massive CPU lag).
-      // We now handle the glow using GPU-accelerated CSS drop-shadows on the canvas element itself.
-
-      const maxDist = 160;
-      const maxDistSq = maxDist * maxDist; 
-
-      particles.forEach((p, index) => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#00F0FF'; 
-        ctx.fill();
-
-        for (let j = index + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          
-          // Avoid Math.sqrt unless absolutely necessary
-          const distSq = dx * dx + dy * dy;
-
-          if (distSq < maxDistSq) {
-            const distance = Math.sqrt(distSq);
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            
-            const opacity = 1 - distance / maxDist;
-            ctx.strokeStyle = `rgba(0, 240, 255, ${opacity * 0.8})`;
-            ctx.lineWidth = 1.5; 
-            ctx.stroke();
-          }
-        }
-      });
-    };
-
-    window.addEventListener('resize', resize);
-    resize();
-    gsap.ticker.add(renderNetwork);
-
-   
-    const ctxGsap = gsap.context(() => {
-      gsap.fromTo([headerRef.current, imageRef.current],
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          }
-        }
-      );
-
-      const validItems = itemsRef.current.filter(Boolean);
-      if (validItems.length > 0) {
-        gsap.fromTo(validItems,
-          { x: 30, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 60%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-
-        gsap.fromTo(".progress-fill",
-          { width: "0%" },
-          {
-            width: (i) => `${cases[i].progress}%`,
-            duration: 1.5,
-            ease: "power4.out",
-            stagger: 0.15,
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 60%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-    }, sectionRef);
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      gsap.ticker.remove(renderNetwork);
-      ctxGsap.revert();
-    };
-  }, [isLoaded]);
-
   return (
-  
-    <section id="case-studies" ref={sectionRef} className="py-24 md:py-36 overflow-hidden bg-[#060912] font-sans relative min-h-screen will-change-transform">
-      
-  
-      <canvas 
-        ref={canvasRef} 
-        className="absolute inset-0 z-0 pointer-events-none opacity-60 drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]" 
-      />
+    <section id="case-studies" className="py-28 md:py-36 px-6 md:px-12 overflow-hidden bg-[#060912] relative">
+      <ParticleNetwork className="opacity-28" maxParticles={48} density={19000} maxDist={145} />
+      <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-[.9fr_1.1fr] gap-12 items-start">
+        <div className="lg:sticky lg:top-28">
+          <p className="section-eyebrow reveal">Proof ledger</p>
+          <h2 className="section-title text-white reveal">
+            Evidence first. <span className="text-gradient">Claims second.</span>
+          </h2>
+          <p className="mt-6 text-white/48 leading-relaxed max-w-lg reveal">
+            The fragile third-party image and unsupported performance metrics are gone. This self-contained ledger shows the publication standard for every future result.
+          </p>
 
-      <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] pointer-events-none opacity-20 mix-blend-screen"
-        style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.15) 0%, transparent 70%)' }} 
-      />
-
-      {isLoaded && (
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            
-            <div className="relative w-full h-full lg:col-span-7">
-              <div ref={imageRef} className="lg:sticky lg:top-24 w-full h-[400px] lg:h-[750px] rounded-3xl overflow-hidden border border-[#00F0FF]/20 bg-[#00F0FF]/5 backdrop-blur-md group flex items-center justify-center shadow-[0_0_30px_rgba(0,240,255,0.05)]">
-                
-                <div className="absolute inset-0 bg-[#00F0FF] opacity-10 blur-3xl rounded-full scale-75 group-hover:scale-100 transition-transform duration-700" />
-
-                <img 
-                  src="https://imgs.search.brave.com/RUrPu4maMjew3yRbi0A52Xmhdqby7LeZdTnJcQXCeNY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTIv/MDczLzM4OC9zbWFs/bC9hLWNsb3NldXAt/b2YtYS1odW1hbi1l/eWUtb24tYS1ncmVl/bi10ZWNoLWJhY2tn/cm91bmQtc3ltYm9s/aXplcy1jeWJlci1z/ZWN1cml0eS1hbmQt/aW5ub3ZhdGlvbi1o/aWdobGlnaHRpbmct/dGhlLW5lZWQtZm9y/LXZpZ2lsYW5jZS1p/bi1hLXJhcGlkbHkt/Y2hhbmdpbmctbGFu/ZHNjYXBlLWZ1bGwt/b2YtcG90ZW50aWFs/LXRocmVhdHMtcGhv/dG8uanBn" 
-                  alt="System Analysis Dashboard" 
-                  className="w-full h-full object-cover opacity-60 group-hover:opacity-100 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500 z-10"
-                />
-
-                <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#00F0FF]/50 m-6 rounded-tl-lg z-20" />
-                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#00F0FF]/50 m-6 rounded-br-lg z-20" />
+          <div className="mt-10 rounded-3xl overflow-hidden border border-[#00F0FF]/20 bg-[#07101A] min-h-[25rem] relative reveal">
+            <div className="absolute inset-0 page-grid opacity-40" />
+            <div className="absolute left-[12%] top-[15%] right-[12%] bottom-[15%] border border-[#00F0FF]/15 rounded-2xl" />
+            <div className="absolute left-[20%] top-[25%] right-[20%] h-px bg-gradient-to-r from-transparent via-[#00F0FF]/60 to-transparent" />
+            <div className="absolute left-[20%] bottom-[31%] right-[20%] h-px bg-gradient-to-r from-transparent via-[#00AFFF]/45 to-transparent" />
+            <div className="absolute top-[23%] left-[30%] w-3 h-3 rounded-full bg-[#00F0FF] shadow-[0_0_22px_#00F0FF]" />
+            <div className="absolute bottom-[29%] right-[27%] w-3 h-3 rounded-full bg-[#00AFFF] shadow-[0_0_22px_#00AFFF]" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center relative">
+                <Database className="mx-auto text-[#00F0FF]" size={42} strokeWidth={1.2} />
+                <p className="font-sans text-[10px] uppercase tracking-[.25em] text-[#00F0FF]/70 mt-5">Source · period · definition</p>
+                <p className="font-sans font-bold text-2xl mt-3">Proof before publication</p>
               </div>
             </div>
-
-            <div className="flex flex-col py-0 lg:py-10 lg:col-span-5">
-              
-              <div ref={headerRef} className="mb-12 text-left">
-                <p className="text-[#00F0FF] font-mono text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_10px_rgba(0,240,255,0.8)]"></span>
-                  System Performance
-                </p>
-                <h2 className="text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-[1.1]">
-                  Operational <br className="hidden lg:block"/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#00AFFF]">Metrics</span>
-                </h2>
-              </div>
-
-              <div className="space-y-8">
-                {cases.map((c, i) => (
-                  <div 
-                    key={i} 
-                    ref={(el) => (itemsRef.current[i] = el)}
-                    className="relative group p-5 rounded-2xl bg-white/[0.01] border border-white/[0.03] backdrop-blur-sm hover:bg-white/[0.04] transition-all duration-300"
-                  >
-                    <div className="flex justify-between items-end mb-4 gap-4">
-                      
-                      <div className="pr-4">
-                        <span className="inline-block text-[#00F0FF] text-[10px] font-mono uppercase tracking-[0.2em] mb-2 px-3 py-1 rounded-full border border-[#00F0FF]/20 bg-[#00F0FF]/5">
-                          {c.tag}
-                        </span>
-                        <h3 className="text-base md:text-lg font-medium text-white/80 group-hover:text-white transition-colors leading-snug">
-                          {c.title}
-                        </h3>
-                      </div>
-
-                      <div 
-                        className="text-3xl md:text-4xl font-mono font-bold tracking-tighter shrink-0 mb-1"
-                        style={{ color: '#00F0FF', textShadow: '0 0 20px rgba(0,240,255,0.4)' }}
-                      >
-                        {c.metric}
-                      </div>
-                    </div>
-                    
-                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden relative mt-1">
-                      <div 
-                        className="progress-fill absolute top-0 left-0 h-full rounded-full bg-[#00F0FF]"
-                        style={{ width: '0%', boxShadow: '0 0 15px 2px rgba(0,240,255,0.8)' }} 
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
           </div>
         </div>
-      )}
+
+        <div className="space-y-5 lg:pt-16">
+          {caseStudies.map((item, index) => (
+            <article key={item.id} className="rounded-3xl border border-white/[0.08] bg-[#090C15]/90 p-7 md:p-8 reveal-right">
+              <div className="flex items-center justify-between gap-4">
+                <span className="font-sans text-[10px] uppercase tracking-[.2em] text-[#00F0FF]/60">{item.label}</span>
+                {index === 0 ? <FileCheck2 size={18} className="text-[#00F0FF]" /> : <TimerReset size={18} className="text-white/25" />}
+              </div>
+              <h3 className="font-sans font-bold text-2xl mt-6 leading-tight tracking-[-0.035em]">{item.title}</h3>
+              <p className="mt-4 text-white/45 text-sm leading-relaxed">{item.summary}</p>
+              <div className="grid sm:grid-cols-2 gap-3 mt-6">
+                {item.facts.map((fact) => (
+                  <span key={fact} className="flex gap-2 text-xs text-white/45">
+                    <CheckCircle2 size={14} className="text-[#00F0FF] shrink-0" />
+                    {fact}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+          <Link to="/case-studies" className="btn-ghost inline-flex items-center gap-2 mt-3">
+            Open the full proof ledger <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
     </section>
-  );
+  )
 }

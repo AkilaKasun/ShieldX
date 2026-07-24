@@ -1,253 +1,58 @@
-"use client";
+import { Check, FileCheck2, LockKeyhole, Scale, ShieldCheck } from 'lucide-react'
+import { proofLedger, trustPrinciples } from '../../content/siteContent'
+import MetricCounter from '../ui/MetricCounter'
+import ParticleNetwork from '../ui/ParticleNetwork'
 
-import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Shield, Zap, BarChart3, Flag } from 'lucide-react';
+const principles = [
+  { icon: LockKeyhole, title: 'Credential-safe intake' },
+  { icon: FileCheck2, title: 'Ownership before action' },
+  { icon: Scale, title: 'Lawful official routes' },
+  { icon: ShieldCheck, title: 'Scope before remediation' },
+]
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-export default function WhyChooseUs() {
-  const sectionRef = useRef(null);
-  const statsRefs = useRef([]);
-  const featuresRefs = useRef([]);
-  const canvasRef = useRef(null);
-
-
-  statsRefs.current = [];
-  featuresRefs.current = [];
-
-  const features = [
-    {
-      icon: Shield,
-      title: '100% Confidential',
-      desc: 'Every assessment handled with absolute discretion. Zero data retention means 100% control given.',
-    },
-    {
-      icon: Zap,
-      title: '24/7 Crisis Response',
-      desc: "Digital emergencies can't wait. Our team responds around the clock to mitigate reputation ruin.",
-    },
-    {
-      icon: BarChart3,
-      title: 'Transparent Reporting',
-      desc: "Real-time dashboards and weekly reports. You always know exactly what's happening.",
-    },
-    {
-      icon: Flag,
-      title: "Sri Lanka's Most Trusted",
-      desc: "Locally rooted, globally focused. The only full-service digital partner you'll ever need.",
-    },
-  ];
-
-  const stats = [
-    { num: 98, suffix: '%', label: 'Takedown Success' },
-    { num: 96, suffix: '%', label: 'Client Retention' },
-    { num: 92, suffix: '%', label: 'On-Time Delivery' },
-    { num: 4.5, suffix: '', label: 'Satisfaction' },
-  ];
-
-  useEffect(() => {
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
-
-    const resize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = canvas.parentElement.offsetHeight;
-      initParticles();
-    };
-
-    const initParticles = () => {
-      particles = [];
-      const particleCount = Math.floor((width * height) / 15000); 
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.5, 
-          vy: (Math.random() - 0.5) * 0.5, 
-          radius: Math.random() * 1.5 + 0.5,
-        });
-      }
-    };
-
-    const renderNetwork = () => {
-      ctx.clearRect(0, 0, width, height);
-      
-    
-      particles.forEach((p, index) => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-      
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 175, 255, 0.5)';
-        ctx.fill();
-
-   
-        for (let j = index + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 120) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-           
-            const opacity = 1 - distance / 120;
-            ctx.strokeStyle = `rgba(0, 240, 255, ${opacity * 0.2})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      });
-    };
-
-    window.addEventListener('resize', resize);
-    resize();
-    
-   
-    gsap.ticker.add(renderNetwork);
-
-  
-    const timer = setTimeout(() => {
-      const ctxGsap = gsap.context(() => {
-        
-       
-        statsRefs.current.forEach((el) => {
-          if (!el) return;
-          const targetValue = parseFloat(el.getAttribute('data-value'));
-          const isDecimal = targetValue % 1 !== 0;
-          const counter = { val: 0 };
-          
-          gsap.to(counter, {
-            val: targetValue,
-            duration: 2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-            onUpdate: () => {
-              el.innerText = isDecimal ? counter.val.toFixed(1) : Math.round(counter.val);
-            }
-          });
-        });
-
-       
-        const validFeatures = featuresRefs.current.filter(Boolean);
-        if (validFeatures.length > 0) {
-          gsap.fromTo(validFeatures,
-            { x: 100, opacity: 0 },
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.8,
-              stagger: 0.15,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: validFeatures[0], 
-                start: "top 85%",
-                toggleActions: "play none none none",
-              }
-            }
-          );
-        }
-      }, sectionRef);
-
-      return () => ctxGsap.revert();
-    }, 100); 
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', resize);
-      gsap.ticker.remove(renderNetwork); 
-    };
-  }, []);
-
+export default function Takedowns() {
   return (
-    <section ref={sectionRef} className="py-36 px-6 md:px-16 bg-[#060912] relative overflow-hidden">
-      
-   
-      <canvas 
-        ref={canvasRef} 
-        className="absolute inset-0 z-0 pointer-events-none"
-      />
-
-      <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] pointer-events-none opacity-40 z-0"
-        style={{ background: 'radial-gradient(ellipse, rgba(0,175,255,0.15) 0%, transparent 60%)' }} 
-      />
-
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
-        
+    <section className="py-28 md:py-36 px-6 md:px-12 bg-[#060912] relative overflow-hidden">
+      <ParticleNetwork className="opacity-25" density={20000} maxParticles={45} maxDist={135} />
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-start relative z-10">
         <div>
-          <h2 className="text-5xl md:text-6xl font-sans font-bold text-white tracking-tight leading-[1.1] mb-12">
-            ShieldX is different<br />
-            because we<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00AFFF] to-[#00F0FF]">
-              actually deliver.
-            </span>
+          <p className="section-eyebrow reveal">Trust mechanics</p>
+          <h2 className="section-title text-white reveal">
+            The process is designed to <span className="text-gradient">reduce risk.</span>
           </h2>
-
-          <div className="bg-[#0A0D18]/50 border border-white/[0.05] rounded-3xl p-10 backdrop-blur-md shadow-[0_0_40px_rgba(0,175,255,0.05)]">
-            <div className="grid grid-cols-2 gap-y-12 gap-x-8">
-              {stats.map((stat, i) => (
-                <div key={i}>
-                  <div className="text-4xl md:text-5xl font-sans font-bold text-[#00AFFF] mb-2 flex">
-                    <span ref={(el) => (statsRefs.current[i] = el)} data-value={stat.num}>0</span>
-                    <span>{stat.suffix}</span>
-                  </div>
-                  <div className="text-white/60 text-sm font-light">
-                    {stat.label}
-                  </div>
+          <p className="mt-6 text-white/48 leading-relaxed max-w-xl reveal">
+            Outcome claims have been replaced with commitments FLUX Digital can control and package metrics that state their definition, source, and date.
+          </p>
+          <div className="grid grid-cols-2 gap-4 mt-10">
+            {proofLedger.map((item) => (
+              <article key={item.label} className="rounded-2xl border border-[#00F0FF]/15 bg-[#00F0FF]/[0.035] p-5 reveal">
+                <div className="font-sans font-bold text-3xl text-[#00F0FF]">
+                  <MetricCounter value={item.value} suffix={item.suffix} />
                 </div>
-              ))}
-            </div>
+                <p className="text-white/55 text-xs mt-3 leading-snug">{item.label}</p>
+                <p className="text-white/22 text-[9px] mt-3">{item.source} · {item.period}</p>
+              </article>
+            ))}
           </div>
         </div>
 
-        <div className="flex flex-col gap-6 lg:pl-10">
-          {features.map((feature, i) => {
-            const Icon = feature.icon;
-            return (
-              <div 
-                key={i} 
-                ref={(el) => (featuresRefs.current[i] = el)} 
-                // Added glassmorphism classes to these cards
-                className="flex gap-6 group opacity-0 translate-x-[100px] bg-white/[0.02] backdrop-blur-md border border-white/[0.05] rounded-2xl p-6 hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-300" 
-              >
-                <div className="mt-1 shrink-0">
-                  <div className="w-12 h-12 rounded-xl bg-[#00AFFF]/10 border border-[#00AFFF]/20 flex items-center justify-center text-[#00AFFF] group-hover:scale-110 group-hover:bg-[#00AFFF]/20 group-hover:shadow-[0_0_15px_rgba(0,175,255,0.3)] transition-all duration-300">
-                    <Icon size={24} strokeWidth={1.5} />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-white font-bold text-xl mb-2 tracking-tight group-hover:text-[#00F0FF] transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-white/40 leading-relaxed font-light text-sm md:text-base">
-                    {feature.desc}
-                  </p>
-                </div>
+        <div className="space-y-4 lg:pt-12">
+          {principles.map(({ icon: Icon, title }, index) => (
+            <article key={title} className="rounded-2xl border border-white/[0.08] bg-[#090C15]/85 backdrop-blur p-6 flex gap-5 reveal-right">
+              <div className="w-12 h-12 rounded-xl bg-[#00F0FF]/[0.07] border border-[#00F0FF]/15 text-[#00F0FF] flex items-center justify-center shrink-0">
+                <Icon size={22} strokeWidth={1.5} />
               </div>
-            );
-          })}
+              <div>
+                <h3 className="font-sans font-bold text-xl leading-tight tracking-[-0.03em]">{title}</h3>
+                <p className="mt-3 text-white/45 text-sm leading-relaxed flex gap-2">
+                  <Check size={15} className="text-[#00F0FF] shrink-0 mt-0.5" />
+                  {trustPrinciples[index]}
+                </p>
+              </div>
+            </article>
+          ))}
         </div>
-
       </div>
     </section>
-  );
+  )
 }

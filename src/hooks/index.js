@@ -1,112 +1,101 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
-// Smooth scroll with Lenis
 export function useLenis() {
   useEffect(() => {
     let lenis
-    import('lenis').then(({ default: Lenis }) => {
-      lenis = new Lenis({
-        duration: 1.4,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smooth: true,
-        smoothTouch: false,
-      })
-      function raf(time) {
-        lenis.raf(time)
-        requestAnimationFrame(raf)
-      }
-      requestAnimationFrame(raf)
-    }).catch(() => {
-      // Lenis not available, fallback gracefully
-    })
-    return () => { if (lenis) lenis.destroy() }
-  }, [])
-}
+    let frameId
+    let mounted = true
 
-// Intersection observer for scroll reveals
-export function useReveal() {
-  useEffect(() => {
-    const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e, i) => {
-          if (e.isIntersecting) {
-            setTimeout(() => e.target.classList.add('visible'), i * 90)
-          }
+    import('lenis')
+      .then(({ default: Lenis }) => {
+        if (!mounted) return
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: (time) => Math.min(1, 1.001 - Math.pow(2, -10 * time)),
+          smoothWheel: true,
+          syncTouch: false,
         })
-      },
-      { threshold: 0.12 }
-    )
-    els.forEach(el => obs.observe(el))
-    return () => obs.disconnect()
-  }, [])
-}
-
-// Count-up numbers
-export function useCountUp() {
-  useEffect(() => {
-    const els = document.querySelectorAll('[data-count]')
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const target = parseInt(e.target.dataset.count)
-          const suffix = e.target.dataset.suffix || ''
-          let start = 0
-          const dur = 2000
-          const step = target / dur * 16
-          const timer = setInterval(() => {
-            start += step
-            if (start >= target) {
-              clearInterval(timer)
-              e.target.textContent = Math.round(target) + suffix
-            } else {
-              e.target.textContent = Math.floor(start) + suffix
-            }
-          }, 16)
-          obs.unobserve(e.target)
+        const frame = (time) => {
+          lenis.raf(time)
+          frameId = requestAnimationFrame(frame)
         }
+        frameId = requestAnimationFrame(frame)
       })
-    }, { threshold: 0.5 })
-    els.forEach(el => obs.observe(el))
-    return () => obs.disconnect()
+      .catch(() => {})
+
+    return () => {
+      mounted = false
+      cancelAnimationFrame(frameId)
+      lenis?.destroy()
+    }
   }, [])
 }
 
-// Custom cursor
-export function useCursor() {
+export function useReveal(routeKey) {
   useEffect(() => {
-    const dot = document.getElementById('cursor-dot')
-    const ring = document.getElementById('cursor-ring')
-    if (!dot || !ring) return
-
-    let mx = 0, my = 0, rx = 0, ry = 0
-    const onMove = (e) => {
-      mx = e.clientX; my = e.clientY
-      dot.style.left = mx - 4 + 'px'
-      dot.style.top = my - 4 + 'px'
-    }
-    document.addEventListener('mousemove', onMove)
-
-    let rafId
-    const animRing = () => {
-      rx += (mx - rx - 18) * 0.12
-      ry += (my - ry - 18) * 0.12
-      ring.style.left = rx + 'px'
-      ring.style.top = ry + 'px'
-      rafId = requestAnimationFrame(animRing)
-    }
-    animRing()
-
-    const grow = () => { ring.style.width = '56px'; ring.style.height = '56px'; ring.style.borderColor = 'rgba(0,175,255,0.8)' }
-    const shrink = () => { ring.style.width = '36px'; ring.style.height = '36px'; ring.style.borderColor = 'rgba(0,175,255,0.35)' }
-    document.querySelectorAll('button, a, [data-hover]').forEach(el => {
-      el.addEventListener('mouseenter', grow)
-      el.addEventListener('mouseleave', shrink)
+    const frame = requestAnimationFrame(() => {
+      const elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible')
+              observer.unobserve(entry.target)
+            }
+          })
+        },
+        { threshold: 0.1 },
+      )
+      elements.forEach((element) => observer.observe(element))
+      window.__shieldxRevealObserver = observer
     })
 
     return () => {
-      document.removeEventListener('mousemove', onMove)
-      cancelAnimationFrame(rafId)
+      cancelAnimationFrame(frame)
+      window.__shieldxRevealObserver?.disconnect()
     }
-  }, [])
+  }, [routeKey])
 }
+
+export function useCursor(routeKey) {
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return undefined
+
+    const dot = document.getElementById('cursor-dot')
+    const ring = document.getElementById('cursor-ring')
+    if (!dot || !ring) return undefined
+
+    let mouseX = -100
+    let mouseY = -100
+    let ringX = -100
+    let ringY = -100
+    let frameId
+
+    const move = (event) => {
+      mouseX = event.clientX
+      mouseY = event.clientY
+      dot.style.transform = `translate3d(${mouseX - 4}px, ${mouseY - 4}px, 0)`
+    }
+    const hover = (event) => {
+      const interactive = event.target.closest('button, a, input, textarea, select, [data-hover]')
+      ring.classList.toggle('cursor-active', Boolean(interactive))
+    }
+    const animate = () => {
+      ringX += (mouseX - ringX - 18) * 0.14
+      ringY += (mouseY - ringY - 18) * 0.14
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`
+      frameId = requestAnimationFrame(animate)
+    }
+
+    document.addEventListener('pointermove', move)
+    document.addEventListener('pointerover', hover)
+    animate()
+
+    return () => {
+      document.removeEventListener('pointermove', move)
+      document.removeEventListener('pointerover', hover)
+      cancelAnimationFrame(frameId)
+    }
+  }, [routeKey])
+}
+

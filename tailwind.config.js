@@ -4,8 +4,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Syne', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif'],
+        sans: ['Inter Tight', 'sans-serif'],
+        body: ['Inter Tight', 'sans-serif'],
+        display: ['Inter Tight', 'sans-serif'],
+        mono: ['Inter Tight', 'sans-serif'],
       },
       colors: {
         brand: {

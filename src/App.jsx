@@ -1,125 +1,107 @@
-import { Suspense, lazy, useRef, useEffect, useState } from 'react'
-import { useLenis, useReveal, useCountUp, useCursor } from './hooks'
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import gsap from 'gsap'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import { Volume2, VolumeX } from 'lucide-react'
-gsap.registerPlugin(ScrollTrigger)
-
-// Layout
+import { useCursor, useLenis, useReveal } from './hooks'
+import { serviceDetails, serviceHubs } from './content/siteContent'
 import Nav from './components/layouts/Nav'
 import Footer from './components/layouts/Footer'
-
-// Sections
-import Top from './components/sections/Top'
-import Hero from './components/sections/Hero'
-import TrustBar from './components/sections/TrustBar'
-import Services from './components/sections/Services'
-import Takedowns from './components/sections/Takedowns'
-import CaseStudies from './components/sections/CaseStudies'
-import Process from './components/sections/Process'
-import Testimonials from './components/sections/Testimonials'
-import FAQ from './components/sections/FAQ'
-import CTA from './components/sections/CTA'
-
+import ServicePage from './components/pages/ServicePage'
+import ServiceDetailPage from './components/pages/ServiceDetailPage'
 import bgMusic from './assets/bg-sound.mp3'
 
+const HomePage = lazy(() => import('./components/pages/HomePage'))
+const PackagesPage = lazy(() => import('./components/pages/PackagesPage'))
+const CaseStudiesPage = lazy(() => import('./components/pages/CaseStudiesPage'))
+const AboutPage = lazy(() => import('./components/pages/AboutPage'))
+const FaqPage = lazy(() => import('./components/pages/FaqPage'))
+const PricingConsultationsPage = lazy(() => import('./components/pages/PricingConsultationsPage'))
+const ContactPage = lazy(() => import('./components/pages/ContactPage'))
+const AssessmentPage = lazy(() => import('./components/pages/AssessmentPage'))
+const NotFoundPage = lazy(() => import('./components/pages/NotFoundPage'))
+const LegalIndexPage = lazy(() =>
+  import('./components/pages/LegalPages').then((module) => ({ default: module.LegalIndexPage })),
+)
+const LegalDocumentPage = lazy(() =>
+  import('./components/pages/LegalPages').then((module) => ({ default: module.LegalDocumentPage })),
+)
+
+function RouteProgress() {
+  return (
+    <div className="min-h-[65vh] flex items-center justify-center" role="status" aria-label="Loading page">
+      <div className="w-9 h-9 rounded-full border border-[#00F0FF]/20 border-t-[#00F0FF] animate-spin" />
+    </div>
+  )
+}
+
 export default function App() {
-  const scrollY = useRef(0)
-  
   const audioRef = useRef(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const { pathname } = useLocation()
 
-  const [isPlaying, setIsPlaying] = useState(false) 
-
-  // Hooks
   useLenis()
-  useReveal()
-  useCountUp()
-  useCursor()
+  useReveal(pathname)
+  useCursor(pathname)
 
-  // 2. Play on First Interaction (The Autoplay Workaround)
   useEffect(() => {
-    const handleFirstInteraction = () => {
-      // If the audio exists and is currently paused, play it!
-      if (audioRef.current && audioRef.current.paused) {
-        audioRef.current.play()
-          .then(() => {
-            setIsPlaying(true); // Update the button icon to match
-          })
-          .catch((error) => {
-            console.log("Browser blocked audio play:", error);
-          });
+    window.scrollTo({ top: 0, left: 0 })
+  }, [pathname])
+
+  const toggleSound = async () => {
+    const audio = audioRef.current
+    if (!audio) return
+    if (audio.paused) {
+      try {
+        await audio.play()
+        setIsPlaying(true)
+      } catch {
+        setIsPlaying(false)
       }
-      
-      // Once it plays, remove these listeners so it doesn't trigger on every click
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('keydown', handleFirstInteraction);
-    };
-
-    // Listen for the user's first click or keypress anywhere on the document
-    document.addEventListener('click', handleFirstInteraction);
-    document.addEventListener('keydown', handleFirstInteraction);
-
-    // Cleanup listeners on unmount
-    return () => {
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('keydown', handleFirstInteraction);
-    };
-  }, []);
-
-  const toggleSound = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-      } else {
-        audioRef.current.play()
-      }
-      setIsPlaying(!isPlaying)
+    } else {
+      audio.pause()
+      setIsPlaying(false)
     }
   }
 
   return (
-    <div className="noise">
-      <audio 
-        ref={audioRef} 
-        src={bgMusic}
-        loop 
-        preload="auto" 
-      />
+    <div className="noise min-h-screen">
+      <audio ref={audioRef} src={bgMusic} loop preload="none" />
 
       <button
+        type="button"
         onClick={toggleSound}
-        className="fixed bottom-8 left-8 z-[9999] w-12 h-12 rounded-full flex items-center justify-center bg-[#0A0D18]/80 backdrop-blur-md border border-[#00F0FF]/30 text-[#00F0FF] hover:bg-[#00F0FF]/10 hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] hover:scale-110 transition-all duration-300"
-        aria-label="Toggle background music"
+        className="fixed bottom-5 left-5 z-[60] w-11 h-11 rounded-full flex items-center justify-center bg-[#0A0D18]/88 backdrop-blur-md border border-[#00F0FF]/25 text-[#00F0FF] hover:bg-[#00F0FF]/10 transition-all"
+        aria-label={isPlaying ? 'Pause background music' : 'Play background music'}
+        aria-pressed={isPlaying}
       >
-        {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
+        {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
       </button>
 
-      <div
-        id="cursor-dot"
-        className="fixed w-2 h-2 bg-[#00AFFF] rounded-full pointer-events-none z-[9999] mix-blend-screen"
-        style={{ transition: 'none' }}
-      />
-      <div
-        id="cursor-ring"
-        className="fixed w-9 h-9 border border-[#00AFFF]/35 rounded-full pointer-events-none z-[9998]"
-        style={{ transition: 'width 0.2s, height 0.2s, border-color 0.2s' }}
-      />
+      <div id="cursor-dot" className="custom-cursor fixed w-2 h-2 bg-[#00AFFF] rounded-full pointer-events-none z-[9999] mix-blend-screen" />
+      <div id="cursor-ring" className="custom-cursor fixed w-9 h-9 border border-[#00AFFF]/35 rounded-full pointer-events-none z-[9998]" />
 
       <Nav />
-
-      <main>
-        <Top /> 
-        <Hero scrollY={scrollY} />
-        <TrustBar />
-        <Services />
-        <Takedowns />
-        <CaseStudies />
-        <Process />
-        <Testimonials />
-        <FAQ />
-        <CTA />
-      </main>
-
+      <Suspense fallback={<RouteProgress />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          {serviceHubs.map((hub) => (
+            <Route key={hub.slug} path={`/${hub.slug}`} element={<ServicePage hub={hub} />} />
+          ))}
+          {serviceDetails.map((detail) => (
+            <Route key={detail.path} path={detail.path} element={<ServiceDetailPage />} />
+          ))}
+          <Route path="/emergency-reputation-rescue/book-case-assessment" element={<AssessmentPage />} />
+          <Route path="/packages" element={<PackagesPage />} />
+          <Route path="/case-studies" element={<CaseStudiesPage />} />
+          <Route path="/pricing-consultations" element={<PricingConsultationsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/legal" element={<LegalIndexPage />} />
+          <Route path="/legal/:legalSlug" element={<LegalDocumentPage />} />
+          <Route path="/404" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
       <Footer />
     </div>
   )
