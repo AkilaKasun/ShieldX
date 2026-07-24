@@ -33,26 +33,54 @@ export function useLenis() {
 
 export function useReveal(routeKey) {
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      const elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible')
-              observer.unobserve(entry.target)
-            }
-          })
-        },
-        { threshold: 0.1 },
-      )
-      elements.forEach((element) => observer.observe(element))
-      window.__shieldxRevealObserver = observer
+    const selector = '.reveal, .reveal-left, .reveal-right'
+    const observed = new WeakSet()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.1 },
+    )
+
+    const observeTree = (root) => {
+      const elements = []
+      if (root instanceof Element && root.matches(selector)) {
+        elements.push(root)
+      }
+      if (root.querySelectorAll) {
+        elements.push(...root.querySelectorAll(selector))
+      }
+      elements.forEach((element) => {
+        if (!observed.has(element)) {
+          observed.add(element)
+          observer.observe(element)
+        }
+      })
+    }
+
+    const mutationObserver = new MutationObserver((records) => {
+      records.forEach((record) => {
+        record.addedNodes.forEach((node) => {
+          if (node instanceof Element) observeTree(node)
+        })
+      })
     })
 
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
+    observeTree(document)
+    window.__shieldxRevealObserver = observer
+
     return () => {
-      cancelAnimationFrame(frame)
-      window.__shieldxRevealObserver?.disconnect()
+      mutationObserver.disconnect()
+      observer.disconnect()
+      if (window.__shieldxRevealObserver === observer) {
+        delete window.__shieldxRevealObserver
+      }
     }
   }, [routeKey])
 }
@@ -98,4 +126,3 @@ export function useCursor(routeKey) {
     }
   }, [routeKey])
 }
-
