@@ -40,7 +40,7 @@ export default function App() {
 
   useLenis()
   useReveal(pathname)
-  useCursor(pathname)
+  // useCursor(pathname)
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 })
@@ -76,8 +76,8 @@ export default function App() {
         {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
       </button>
 
-      <div id="cursor-dot" className="custom-cursor fixed w-2 h-2 bg-[#00AFFF] rounded-full pointer-events-none z-[9999] mix-blend-screen" />
-      <div id="cursor-ring" className="custom-cursor fixed w-9 h-9 border border-[#00AFFF]/35 rounded-full pointer-events-none z-[9998]" />
+      {/* <div id="cursor-dot" className="custom-cursor fixed w-2 h-2 bg-[#00AFFF] rounded-full pointer-events-none z-[9999] mix-blend-screen" />
+      <div id="cursor-ring" className="custom-cursor fixed w-9 h-9 border border-[#00AFFF]/35 rounded-full pointer-events-none z-[9998]" /> */}
 
       <Nav />
       <Suspense fallback={<RouteProgress />}>

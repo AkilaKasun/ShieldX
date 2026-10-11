@@ -20,7 +20,9 @@ export default function HomePage() {
         title="FLUX Digital"
         description="Recover what is at risk, create what people remember, and grow what you built with FLUX Digital."
       />
-      <Top />
+      <div className="hidden lg:block">
+        <Top />
+      </div>
       <Hero scrollY={scrollY} />
       <TrustBar />
       <Services />

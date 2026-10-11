@@ -65,17 +65,7 @@
     font-family: 'Inter Tight', sans-serif !important;
   }
 
-  @media (pointer: fine) {
-    body,
-    a,
-    button,
-    input,
-    textarea,
-    select,
-    label {
-      cursor: none !important;
-    }
-  }
+
 
   @media (pointer: coarse) {
     .custom-cursor {
@@ -188,9 +178,6 @@
 }
 
 @layer utilities {
-  .cursor-none {
-    cursor: none;
-  }
 
   .text-balance {
     text-wrap: balance;
@@ -204,18 +191,6 @@
     mask-image: linear-gradient(to bottom, black, transparent 92%);
   }
 
-  .custom-cursor {
-    top: 0;
-    left: 0;
-    transition: width .2s, height .2s, border-color .2s, background-color .2s;
-  }
-
-  #cursor-ring.cursor-active {
-    width: 56px;
-    height: 56px;
-    border-color: rgba(0, 240, 255, .75);
-    background: rgba(0, 240, 255, .04);
-  }
 
   .word-wrap {
     overflow: hidden;
