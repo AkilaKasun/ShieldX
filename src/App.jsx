@@ -41,6 +41,7 @@ export default function App() {
   useLenis()
   useReveal(pathname)
   // useCursor(pathname)
+  
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 })
