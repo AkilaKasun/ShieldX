@@ -11,7 +11,6 @@ function CyberSphere({ scrollY }) {
   const ringsRef = useRef([])
   const particlesRef = useRef()
   const glowRef = useRef()
-  const { size } = useThree()
 
   // Build icosahedron wireframe for cyber look
   const icoGeo = useMemo(() => new THREE.IcosahedronGeometry(1.6, 4), [])
@@ -21,7 +20,6 @@ function CyberSphere({ scrollY }) {
     transparent: true,
     opacity: 0.12,
   }), [])
-
 
   const sphereGeo = useMemo(() => new THREE.SphereGeometry(1.55, 64, 48), [])
   const sphereMat = useMemo(() => new THREE.MeshBasicMaterial({
@@ -71,7 +69,6 @@ function CyberSphere({ scrollY }) {
     { r: 2.3, thickness: 0.004, tilt: Math.PI * 0.35, speed: -0.05 },
     { r: 2.6, thickness: 0.003, tilt: Math.PI * 0.52, speed: 0.04 },
   ], [])
-
 
   const ambientGeo = useMemo(() => {
     const geo = new THREE.BufferGeometry()
@@ -129,19 +126,15 @@ function CyberSphere({ scrollY }) {
     const t = clock.getElapsedTime()
     const scroll = scrollY.current
 
-
     groupRef.current.rotation.y = t * 0.12 + scroll * Math.PI * 0.5
     groupRef.current.rotation.x = scroll * 0.3
 
-   
     const scale = Math.max(0.3, 1 - scroll * 0.55)
     groupRef.current.scale.setScalar(scale)
 
-   
     groupRef.current.position.y = scroll * -3.5
     groupRef.current.position.z = scroll * -2
 
-  
     if (outerRef.current) outerRef.current.rotation.y = -t * 0.08
     if (innerRef.current) innerRef.current.rotation.x = t * 0.15
 
@@ -149,42 +142,26 @@ function CyberSphere({ scrollY }) {
       if (ring) ring.rotation.z = t * rings[i].speed
     })
 
-   
     if (glowRef.current) {
       glowRef.current.material.opacity = 0.04 + Math.sin(t * 0.8) * 0.02
     }
 
-    
     if (particlesRef.current) {
       particlesRef.current.rotation.y = t * 0.015
     }
-
- 
   })
 
   return (
     <group ref={groupRef}>
-  
       <points ref={particlesRef} geometry={ambientGeo} material={ambientMat} />
-
-
       <mesh geometry={sphereGeo} material={sphereMat} />
-
-    
       <points geometry={dotsGeo} material={dotsMat} />
-
       <mesh ref={outerRef} geometry={icoGeo} material={icoMat} />
-
-
       <mesh ref={innerRef}>
         <icosahedronGeometry args={[1.3, 2]} />
         <meshBasicMaterial color={0x00AFFF} wireframe transparent opacity={0.06} />
       </mesh>
-
-      
       <mesh ref={glowRef} geometry={glowGeo} material={glowMat} />
-
-     
       {rings.map((ring, i) => (
         <mesh
           key={i}
@@ -195,13 +172,9 @@ function CyberSphere({ scrollY }) {
           <meshBasicMaterial color={0x00AFFF} transparent opacity={0.2 - i * 0.04} />
         </mesh>
       ))}
-
-     
       {arcLines.map((arc, i) => (
         <line key={i} geometry={arc.geo} material={arc.mat} />
       ))}
-
-
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.62, 0.003, 4, 128]} />
         <meshBasicMaterial color={0x00ffcc} transparent opacity={0.35} />
@@ -209,7 +182,6 @@ function CyberSphere({ scrollY }) {
     </group>
   )
 }
-
 
 function ScrollReader({ scrollY }) {
   useEffect(() => {
@@ -230,20 +202,22 @@ function Scene({ scrollY }) {
       <CyberSphere scrollY={scrollY} />
       <ambientLight intensity={0.3} color={0x001133} />
       <pointLight position={[5, 3, 5]} intensity={1.5} color={0x00AFFF} />
-      <pointLight position={[-5, -3, -3]} intensity={0.8} color={0x2D7FF9} />
+      <pointLight position={[-5, -3, -3]} intensity= {0.8} color={0x2D7FF9} />
     </>
   )
 }
 
 export default function CyberEarth({ scrollY }) {
   return (
-    <Canvas
-      camera={{ position: [0, 0, 5.5], fov: 42 }}
-      gl={{ antialias: true, alpha: true }}
-      style={{ background: 'transparent' }}
-      dpr={[1, 2]}
-    >
-      <Scene scrollY={scrollY} />
-    </Canvas>
+    <div className="w-full h-full flex items-center justify-center">
+      <Canvas
+        camera={{ position: [0, 0, 8], fov: 45 }}
+        gl={{ antialias: true, alpha: true }}
+        style={{ background: 'transparent' }}
+        dpr={[1, 2]}
+      >
+        <Scene scrollY={scrollY} />
+      </Canvas>
+    </div>
   )
 }
